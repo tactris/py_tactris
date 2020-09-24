@@ -1,5 +1,5 @@
 import pygame
-from figures import ALL_FIGURES
+from shapes import ALL_SHAPES
 
 WHITE = (229, 229, 229)
 BLUE = (170, 221, 255)
@@ -8,13 +8,13 @@ GRAY = (51, 51, 51)
 
 
 class SmartStack:
-    def __init__(self, maxlen):
-        self.maxlen = maxlen
+    def __init__(self, size):
+        self.size = size
         self._data = []
 
     def append(self, elem):
         self._data.append(elem)
-        if len(self._data) > self.maxlen:
+        if len(self._data) > self.size:
             return self._data.pop(0)
 
     def remove(self, elem):
@@ -58,6 +58,10 @@ class Block:
         self.is_pressed = False
         self.is_filled = True
 
+    def unfill(self):
+        pygame.draw.rect(self.screen, self.UNPRESSED, self.rect)
+        self.is_filled = False
+
     def draw(self):
         pygame.draw.rect(self.screen, self.UNPRESSED, self.rect)
 
@@ -93,7 +97,7 @@ class WorkingArea:
         return lowest_i, rightest_j
 
     def figure_match(self):
-        return self.hash in ALL_FIGURES
+        return self.hash in ALL_SHAPES
 
     def update(self, grid):
         if not self.stack:
@@ -109,6 +113,8 @@ class WorkingArea:
         if self.figure_match():
             self.fill_figure()
             self.stack.clear()
+            return True
+        return False
 
     def fill_figure(self):
         for line in self.area:
@@ -129,13 +135,36 @@ class Grid:
         self.stack = SmartStack(4)
         self.working_area = WorkingArea()
 
+    @staticmethod
+    def is_line_filled(line):
+        return all(block.is_filled for block in line)
+
+    def tactris(self, blocks):
+        for block in blocks:
+            block.unfill()
+
+    def update(self):
+        blocks = set()
+        for line in self.grid:
+            if self.is_line_filled(line):
+                blocks |= set(line)
+
+        transposed_grid = map(list, zip(*self.grid))
+        for line in transposed_grid:
+            if self.is_line_filled(line):
+                blocks |= set(line)
+
+        self.tactris(blocks)
+
     def click(self, x, y):
         i, j = y // 50, x // 50
         if i >= self.n or j >= self.n:
             return
         block = self.grid[i][j]
         self.working_area.press_block(block)
-        self.working_area.update(self.grid)
+        shape_matched = self.working_area.update(self.grid)
+        if shape_matched:
+            self.update()
 
     def draw(self):
         x, y = 0, 0
@@ -153,13 +182,14 @@ class Grid:
 
 def main():
     pygame.init()
-    display = pygame.display.set_mode((800, 600), 0, 32)
+    screen = pygame.display.set_mode((800, 600), 0, 32)
+    clock = pygame.time.Clock()
     pygame.display.set_caption("Tactris")
 
     running = True
 
-    display.fill(GRAY)
-    field = Grid(display)
+    screen.fill(GRAY)
+    field = Grid(screen)
     field.draw()
 
     while running:
@@ -172,6 +202,7 @@ def main():
                 running = False
 
         pygame.display.update()
+        clock.tick(60)  # Limit the frame rate to 60 FPS.
 
 
 if __name__ == "__main__":
