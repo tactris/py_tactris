@@ -1,5 +1,4 @@
 import pygame
-
 from figures import ALL_FIGURES
 
 WHITE = (229, 229, 229)
@@ -9,7 +8,6 @@ GRAY = (51, 51, 51)
 
 
 class SmartStack:
-
     def __init__(self, maxlen):
         self.maxlen = maxlen
         self._data = []
@@ -64,11 +62,10 @@ class Block:
         pygame.draw.rect(self.screen, self.UNPRESSED, self.rect)
 
     def __str__(self):
-        return f'x: {self.x}, y: {self.y}, i: {self.i}, j: {self.j}'
+        return f"x: {self.x}, y: {self.y}, i: {self.i}, j: {self.j}"
 
 
 class WorkingArea:
-
     def __init__(self):
         self.area = []
         self.stack = SmartStack(4)
@@ -121,11 +118,10 @@ class WorkingArea:
 
     @property
     def hash(self):
-        return ''.join('1' if b.is_pressed else '0' for l in self.area for b in l)
+        return "".join("1" if b.is_pressed else "0" for line in self.area for b in line)
 
 
 class Grid:
-
     def __init__(self, screen, n=10):
         self.n = n
         self.grid = []
@@ -178,5 +174,5 @@ def main():
         pygame.display.update()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
