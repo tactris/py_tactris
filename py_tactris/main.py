@@ -1,5 +1,5 @@
 import pygame
-from core import GRAY
+from core import BACKGROUND_COLOR
 from grid import Grid
 from sidebar import Sidebar
 
@@ -19,7 +19,7 @@ class Tactris:
                 self.grid.set_shapes(self.sidebar.shapes)
 
     def draw(self):
-        self.screen.fill(GRAY)
+        self.screen.fill(BACKGROUND_COLOR)
         self.sidebar = Sidebar(self.screen)  # noqa
         self.grid = Grid(self.screen, self.sidebar.shapes)  # noqa
 
