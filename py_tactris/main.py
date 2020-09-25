@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 from shapes import ALL_SHAPES
 
@@ -130,7 +131,7 @@ class WorkingArea:
 class Grid:
     def __init__(self, screen, n=10):
         self.n = n
-        self.grid = []
+        self.grid: np.ndarray
         self.screen = screen
         self.stack = SmartStack(4)
         self.working_area = WorkingArea()
@@ -149,8 +150,7 @@ class Grid:
             if self.is_line_filled(line):
                 blocks |= set(line)
 
-        transposed_grid = map(list, zip(*self.grid))
-        for line in transposed_grid:
+        for line in self.grid.T:
             if self.is_line_filled(line):
                 blocks |= set(line)
 
@@ -167,6 +167,7 @@ class Grid:
             self.update()
 
     def draw(self):
+        grid = []
         x, y = 0, 0
         for i in range(self.n):
             line = []
@@ -175,9 +176,10 @@ class Grid:
                 block.draw()
                 line.append(block)
                 x += 50
-            self.grid.append(line)
+            grid.append(line)
             x = 0
             y += 50
+        self.grid = np.array(grid)
 
 
 def main():
