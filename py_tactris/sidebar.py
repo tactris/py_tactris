@@ -1,5 +1,3 @@
-from typing import Type
-
 from block import Block
 from core import STATES
 from shapes import Shape, get_random_shape
@@ -15,10 +13,12 @@ class ShapeGrid:
         self.shape = None
         self.draw()
 
-    def update(self, shape_cls: Type[Shape]):
-        self.shape = shape_cls
-        shape_hash = shape_cls.get_hash()
-        hash_iter = iter(shape_hash)
+    def is_matched(self, _hash):
+        return _hash in self.shape.SHAPES
+
+    def update(self, shape: Shape):
+        self.shape = shape
+        hash_iter = iter(self.shape.hash)
         for i in range(self.n):
             for j in range(self.n):
                 ch = next(hash_iter)
@@ -27,6 +27,7 @@ class ShapeGrid:
                     block.press()
 
     def clear(self):
+        print(f"{self} cleared!")
         for line in self.blocks:
             for block in line:
                 block.remove()
@@ -43,27 +44,28 @@ class ShapeGrid:
             x = self.x
             self.blocks.append(line)
 
+    def __str__(self):
+        return f"hash {self.shape.hash}"
+
 
 class Sidebar:
     def __init__(self, screen):
         self.screen = screen
-        self.score = 0
-        self.record = 0
         self.current_shapes = {}
         self.shape_grid1 = ShapeGrid(self.screen, 520, 65)
         self.shape_grid2 = ShapeGrid(self.screen, 600, 65)
         self.draw()
 
     def update(self, _hash):
-        if _hash in self.shape_grid1.shape.SHAPES:
-            shape_grid = self.shape_grid1
-        elif _hash in self.shape_grid2.shape.SHAPES:
-            shape_grid = self.shape_grid2
+        assert _hash in {*self.shape_grid1.shape.SHAPES, *self.shape_grid2.shape.SHAPES}
+        if self.shape_grid1.is_matched(_hash):
+            matched_grid, another_grid = self.shape_grid1, self.shape_grid2
         else:
-            raise AssertionError("Unexpected shape")
-        shape_grid.clear()
-        shape_cls = get_random_shape()
-        shape_grid.update(shape_cls)
+            matched_grid, another_grid = self.shape_grid2, self.shape_grid1
+
+        matched_grid.clear()
+        shape = get_random_shape(matched_grid.shape, another_grid.shape)
+        matched_grid.update(shape)
 
     def draw(self):
         shape_cls1 = get_random_shape()
