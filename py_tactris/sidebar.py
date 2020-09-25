@@ -12,10 +12,11 @@ class ShapeGrid:
         self.x, self.y = x, y
         self.b_width, self.b_height = 24, 24
         self.blocks = []
-        self.hash = None
+        self.shape = None
         self.draw()
 
     def update(self, shape_cls: Type[Shape]):
+        self.shape = shape_cls
         shape_hash = shape_cls.get_hash()
         hash_iter = iter(shape_hash)
         for i in range(self.n):
@@ -24,7 +25,6 @@ class ShapeGrid:
                 if ch == "1":
                     block = self.blocks[i][j]
                     block.press()
-        self.hash = shape_hash
 
     def clear(self):
         for line in self.blocks:
@@ -55,17 +55,18 @@ class Sidebar:
         self.draw()
 
     def update(self, _hash):
-        # assert _hash in [self.shape_grid1.hash, self.shape_grid2.hash], _hash
-        if _hash in self.shape_grid1.hash:
+        if _hash in self.shape_grid1.shape.SHAPES:
             shape_grid = self.shape_grid1
-        else:
+        elif _hash in self.shape_grid2.shape.SHAPES:
             shape_grid = self.shape_grid2
+        else:
+            raise AssertionError("Unexpected shape")
         shape_grid.clear()
-        shape_cls: Shape = get_random_shape()
+        shape_cls = get_random_shape()
         shape_grid.update(shape_cls)
 
     def draw(self):
-        shape_cls1: Shape = get_random_shape()
-        shape_cls2: Shape = get_random_shape(shape_cls1)
+        shape_cls1 = get_random_shape()
+        shape_cls2 = get_random_shape(shape_cls1)
         self.shape_grid1.update(shape_cls1)
         self.shape_grid2.update(shape_cls2)
