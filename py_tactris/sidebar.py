@@ -56,6 +56,10 @@ class Sidebar:
         self.shape_grid2 = ShapeGrid(self.screen, 600, 65)
         self.draw()
 
+    @property
+    def shapes(self):
+        return [self.shape_grid1.shape, self.shape_grid2.shape]
+
     def update(self, _hash):
         assert _hash in {*self.shape_grid1.shape.SHAPES, *self.shape_grid2.shape.SHAPES}
         if self.shape_grid1.is_matched(_hash):

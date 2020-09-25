@@ -7,18 +7,21 @@ from sidebar import Sidebar
 class Tactris:
     def __init__(self, screen):
         self.screen = screen
-        self.sidebar = None
-        self.grid = None
+        self.sidebar: Sidebar
+        self.grid: Grid
         self.draw()
 
     def click(self, x, y):
         if x <= 500 and y <= 500:
-            self.grid.click(x, y)
+            shape_matched = self.grid.click(x, y)
+            if shape_matched:
+                self.sidebar.update(shape_matched)
+                self.grid.set_shapes(self.sidebar.shapes)
 
     def draw(self):
         self.screen.fill(GRAY)
-        self.sidebar = Sidebar(self.screen)
-        self.grid = Grid(self.screen, self.sidebar)
+        self.sidebar = Sidebar(self.screen)  # noqa
+        self.grid = Grid(self.screen, self.sidebar.shapes)  # noqa
 
 
 def main():

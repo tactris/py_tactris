@@ -1,13 +1,16 @@
 import numpy as np
 from block import Block
-from shapes import ALL_SHAPES
 from stack import SmartStack
 
 
 class WorkingArea:
-    def __init__(self):
+    def __init__(self, shapes):
+        self.shape1, self.shape2 = shapes
         self.area = []
         self.stack = SmartStack(4)
+
+    def set_shapes(self, shapes):
+        self.shape1, self.shape2 = shapes
 
     def press_block(self, block):
         if block.is_filled:
@@ -32,7 +35,8 @@ class WorkingArea:
         return lowest_i, rightest_j
 
     def shape_match(self):
-        if self.hash in ALL_SHAPES:
+        all_cur_shapes = self.shape1.SHAPES | self.shape2.SHAPES
+        if self.hash in all_cur_shapes:
             return self.hash
 
     def update(self, grid):
@@ -64,14 +68,16 @@ class WorkingArea:
 
 
 class Grid:
-    def __init__(self, screen, sidebar, n=10):
+    def __init__(self, screen, cur_shapes, n=10):
         self.n = n
-        self.sidebar = sidebar
         self.grid: np.ndarray = np.array([])
         self.screen = screen
         self.stack = SmartStack(4)
-        self.working_area = WorkingArea()
+        self.working_area = WorkingArea(cur_shapes)
         self.draw()
+
+    def set_shapes(self, shapes):
+        self.working_area.set_shapes(shapes)
 
     @staticmethod
     def is_line_filled(line):
@@ -102,7 +108,7 @@ class Grid:
         shape_matched = self.working_area.update(self.grid)
         if shape_matched:
             self.update()
-            self.sidebar.update(shape_matched)
+            return shape_matched
 
     def draw(self):
         grid = []
