@@ -27,7 +27,6 @@ class ShapeGrid:
                     block.press()
 
     def clear(self):
-        print(f"{self} cleared!")
         for line in self.blocks:
             for block in line:
                 block.remove()
@@ -45,7 +44,7 @@ class ShapeGrid:
             self.blocks.append(line)
 
     def __str__(self):
-        return f"hash {self.shape.hash}"
+        return f"hash: {self.shape.hash}"
 
 
 class Sidebar:
