@@ -1,0 +1,11 @@
+WHITE = (229, 229, 229)
+BLUE = (170, 221, 255)
+BLACK = (0, 0, 0)
+GRAY = (51, 51, 51)
+
+
+class STATES:
+    FILLED = WHITE
+    PRESSED = BLUE
+    UNPRESSED = BLACK
+    REMOVED = GRAY

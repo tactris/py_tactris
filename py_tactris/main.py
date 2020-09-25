@@ -1,56 +1,10 @@
 import numpy as np
 import pygame
+from block import Block
+from core import GRAY
 from shapes import ALL_SHAPES
+from sidebar import Sidebar
 from stack import SmartStack
-
-WHITE = (229, 229, 229)
-BLUE = (170, 221, 255)
-BLACK = (0, 0, 0)
-GRAY = (51, 51, 51)
-
-
-class Block:
-
-    FILLED = WHITE
-    PRESSED = BLUE
-    UNPRESSED = BLACK
-
-    def __init__(self, screen, x, y, i, j):
-        self.screen = screen
-        self.x, self.y = x, y
-        self.i, self.j = i, j
-        self.state = self.UNPRESSED
-        self.width, self.height = 49, 49
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-    @property
-    def is_pressed(self):
-        return self.state == self.PRESSED
-
-    @property
-    def is_filled(self):
-        return self.state == self.FILLED
-
-    def _update(self):
-        pygame.draw.rect(self.screen, self.state, self.rect)
-
-    def press(self):
-        self.state = self.PRESSED
-        self._update()
-
-    def unpress(self):
-        self.state = self.UNPRESSED
-        self._update()
-
-    def fill(self):
-        self.state = self.FILLED
-        self._update()
-
-    def draw(self):
-        self._update()
-
-    def __str__(self):
-        return f"x: {self.x}, y: {self.y}, i: {self.i}, j: {self.j}"
 
 
 class WorkingArea:
@@ -80,8 +34,9 @@ class WorkingArea:
         rightest_j = rightest.j if rightest.j > 2 else 2
         return lowest_i, rightest_j
 
-    def figure_match(self):
-        return self.hash in ALL_SHAPES
+    def shape_match(self):
+        if self.hash in ALL_SHAPES:
+            return self.hash
 
     def update(self, grid):
         if not self.stack:
@@ -94,13 +49,13 @@ class WorkingArea:
                 line.append(grid[i][j])
             self.area.append(line)
 
-        if self.figure_match():
-            self.fill_figure()
+        matched_shape = self.shape_match()
+        if matched_shape:
+            self.fill_shape()
             self.stack.clear()
-            return True
-        return False
+            return matched_shape
 
-    def fill_figure(self):
+    def fill_shape(self):
         for line in self.area:
             for block in line:
                 if block.is_pressed:
@@ -112,12 +67,14 @@ class WorkingArea:
 
 
 class Grid:
-    def __init__(self, screen, n=10):
+    def __init__(self, screen, sidebar: Sidebar, n=10):
         self.n = n
-        self.grid: np.ndarray
+        self.sidebar = sidebar
+        self.grid: np.ndarray = np.array([])
         self.screen = screen
         self.stack = SmartStack(4)
         self.working_area = WorkingArea()
+        self.draw()
 
     @staticmethod
     def is_line_filled(line):
@@ -148,6 +105,7 @@ class Grid:
         shape_matched = self.working_area.update(self.grid)
         if shape_matched:
             self.update()
+            self.sidebar.update(shape_matched)
 
     def draw(self):
         grid = []
@@ -156,7 +114,6 @@ class Grid:
             line = []
             for j in range(self.n):
                 block = Block(self.screen, x, y, i, j)
-                block.draw()
                 line.append(block)
                 x += 50
             grid.append(line)
@@ -174,14 +131,14 @@ def main():
     running = True
 
     screen.fill(GRAY)
-    field = Grid(screen)
-    field.draw()
+    sidebar = Sidebar(screen)
+    grid = Grid(screen, sidebar)
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                field.click(*pos)
+                grid.click(*pos)
 
             if event.type == pygame.QUIT:
                 running = False
