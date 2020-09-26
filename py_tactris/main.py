@@ -20,26 +20,38 @@ class Tactris:
     def revert(self):
         pass
 
-    def click(self, x, y):
-        if x <= 500 and y <= 500:
-            shape_hash, lines_removed = self.grid.click(x, y)
-            if shape_hash:
-                self.shape_choice.update(shape_hash)
-                self.top_info.update(lines_removed)
-                self.grid.set_shapes(self.shape_choice.shapes)
-        else:
-            action = self.actions.click(x, y)
-            if action and action == Actions.ACTION_RESTART:
+    def mouse(self, x, y):
+        """
+        Handler for mouse event in ANY state
+        """
+        self.actions.update(x, y)
+
+    def mouse_up(self, x, y):
+        """
+        Handler for mouse event in UP state
+        """
+        shape_hash, lines_removed = self.grid.mouse_up()
+        if shape_hash:
+            self.shape_choice.update(shape_hash)
+            self.top_info.update(lines_removed)
+            self.grid.set_shapes(self.shape_choice.shapes)
+
+        action = self.actions.click(x, y)
+        if action:
+            if action == Actions.ACTION_RESTART:
                 self.restart()
-            elif action and action == Actions.ACTION_REVERT:
+            elif action == Actions.ACTION_REVERT:
                 self.revert()
 
-    def mouse(self, x, y):
-        self.actions.update(x, y)
+    def mouse_down(self, x, y):
+        """
+        Handler for mouse event in DOWN state
+        """
+        self.grid.mouse_down(x, y)
 
     def draw(self, max_score=0):
         self.screen.fill(BACKGROUND_COLOR)
-        self.top_info = TopInfo(self.screen, 515, 20, max_score=max_score)  # noqa
+        self.top_info = TopInfo(self.screen, max_score=max_score)  # noqa
         self.actions = Actions(self.screen)  # noqa
         self.shape_choice = ShapeChoice(self.screen)  # noqa
         self.grid = Grid(self.screen, self.shape_choice.shapes)  # noqa
@@ -58,13 +70,17 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
-                tactris.click(*pos)
+                tactris.mouse_up(*pos)
 
             if event.type == pygame.QUIT:
                 running = False
 
         mouse_pos = pygame.mouse.get_pos()
         tactris.mouse(*mouse_pos)
+
+        mouse_pressed, *_ = pygame.mouse.get_pressed()
+        if mouse_pressed:
+            tactris.mouse_down(*mouse_pos)
 
         pygame.display.update()
         clock.tick(60)  # Limit the frame rate to 60 FPS.

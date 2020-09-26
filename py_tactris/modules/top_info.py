@@ -2,10 +2,10 @@ from core import BACKGROUND_COLOR, BLUE, FONT_SCORE, WHITE
 
 
 class TopInfo:
-    def __init__(self, screen, x, y, max_score=0):
+    def __init__(self, screen, max_score=0):
         self.screen = screen
-        self.score_x, self.score_y = x, y
-        self.max_score_x, self.max_score_y = x + 80, y
+        self.score_x, self.score_y = 515, 20
+        self.max_score_x, self.max_score_y = self.score_x + 80, self.score_y
         self.score = 0
         self.max_score = max_score
         self.draw()
