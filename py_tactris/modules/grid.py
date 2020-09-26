@@ -1,3 +1,5 @@
+from typing import Optional, Tuple
+
 import numpy as np
 from modules import Block
 from utlis import SmartStack
@@ -50,11 +52,11 @@ class WorkingArea:
                 line.append(grid[i][j])
             self.area.append(line)
 
-        matched_shape = self.shape_match()
-        if matched_shape:
+        shape_hash = self.shape_match()
+        if shape_hash:
             self.fill_shape()
             self.stack.clear()
-            return matched_shape
+            return shape_hash
 
     def fill_shape(self):
         for line in self.area:
@@ -83,32 +85,35 @@ class Grid:
     def is_line_filled(line):
         return all(block.is_filled for block in line)
 
-    def tactris(self, blocks):
-        for block in blocks:
-            block.unpress()
+    def tactris(self, lines):
+        for line in lines:
+            for block in line:
+                block.unpress()
 
     def update(self):
-        blocks = set()
+        lines = []
         for line in self.grid:
             if self.is_line_filled(line):
-                blocks |= set(line)
+                lines.append(line)
 
         for line in self.grid.T:
             if self.is_line_filled(line):
-                blocks |= set(line)
+                lines.append(line)
 
-        self.tactris(blocks)
+        self.tactris(lines)
+        return len(lines)
 
-    def click(self, x, y):
+    def click(self, x, y) -> Tuple[Optional[str], Optional[int]]:
         i, j = y // 50, x // 50
         if i >= self.n or j >= self.n:
-            return
+            return None, None
         block = self.grid[i][j]
         self.working_area.press_block(block)
-        shape_matched = self.working_area.update(self.grid)
-        if shape_matched:
-            self.update()
-            return shape_matched
+        shape_hash = self.working_area.update(self.grid)
+        if shape_hash:
+            lines_removed = self.update()
+            return shape_hash, lines_removed
+        return None, None
 
     def draw(self):
         grid = []

@@ -15,10 +15,10 @@ class Tactris:
 
     def click(self, x, y):
         if x <= 500 and y <= 500:
-            shape_matched = self.grid.click(x, y)
-            if shape_matched:
-                self.shape_choice.update(shape_matched)
-                self.top_info.update(4)
+            shape_hash, lines_removed = self.grid.click(x, y)
+            if shape_hash:
+                self.shape_choice.update(shape_hash)
+                self.top_info.update(lines_removed)
                 self.grid.set_shapes(self.shape_choice.shapes)
 
     def draw(self):
