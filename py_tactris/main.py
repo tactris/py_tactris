@@ -40,7 +40,7 @@ class Tactris:
     def draw(self, max_score=0):
         self.screen.fill(BACKGROUND_COLOR)
         self.top_info = TopInfo(self.screen, 515, 20, max_score=max_score)  # noqa
-        self.actions = Actions(self.screen, 515, 165)  # noqa
+        self.actions = Actions(self.screen)  # noqa
         self.shape_choice = ShapeChoice(self.screen)  # noqa
         self.grid = Grid(self.screen, self.shape_choice.shapes)  # noqa
 
