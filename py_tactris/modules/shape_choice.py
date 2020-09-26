@@ -1,5 +1,5 @@
-from block import Block
 from core import STATES
+from modules import Block
 from shapes import Shape, get_random_shape
 
 
@@ -47,7 +47,7 @@ class ShapeGrid:
         return f"hash: {self.shape.hash}"
 
 
-class Sidebar:
+class ShapeChoice:
     def __init__(self, screen):
         self.screen = screen
         self.current_shapes = {}

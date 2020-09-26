@@ -1,6 +1,6 @@
 import numpy as np
-from block import Block
-from stack import SmartStack
+from modules import Block
+from utlis import SmartStack
 
 
 class WorkingArea:

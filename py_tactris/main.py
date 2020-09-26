@@ -1,13 +1,15 @@
 import pygame
+import pygame.freetype
 from core import BACKGROUND_COLOR
-from grid import Grid
-from sidebar import Sidebar
+from modules import Grid, ShapeChoice
+from modules.top_info import TopInfo
 
 
 class Tactris:
     def __init__(self, screen):
         self.screen = screen
-        self.sidebar: Sidebar
+        self.top_info: TopInfo
+        self.shape_choice: ShapeChoice
         self.grid: Grid
         self.draw()
 
@@ -15,13 +17,15 @@ class Tactris:
         if x <= 500 and y <= 500:
             shape_matched = self.grid.click(x, y)
             if shape_matched:
-                self.sidebar.update(shape_matched)
-                self.grid.set_shapes(self.sidebar.shapes)
+                self.shape_choice.update(shape_matched)
+                self.top_info.update(4)
+                self.grid.set_shapes(self.shape_choice.shapes)
 
     def draw(self):
         self.screen.fill(BACKGROUND_COLOR)
-        self.sidebar = Sidebar(self.screen)  # noqa
-        self.grid = Grid(self.screen, self.sidebar.shapes)  # noqa
+        self.top_info = TopInfo(self.screen, 515, 20)  # noqa
+        self.shape_choice = ShapeChoice(self.screen)  # noqa
+        self.grid = Grid(self.screen, self.shape_choice.shapes)  # noqa
 
 
 def main():
