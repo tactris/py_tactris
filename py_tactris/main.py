@@ -22,13 +22,13 @@ class Tactris:
 
     def mouse(self, x, y):
         """
-        Handler for mouse event in ANY state
+        Handler for mouse-movement events
         """
         self.actions.update(x, y)
 
     def mouse_up(self, x, y):
         """
-        Handler for mouse event in UP state
+        Handler for mouse UP events
         """
         shape_hash, lines_removed = self.grid.mouse_up()
         if shape_hash:
@@ -45,7 +45,7 @@ class Tactris:
 
     def mouse_down(self, x, y):
         """
-        Handler for mouse event in DOWN state
+        Handler for mouse DOWN events
         """
         self.grid.mouse_down(x, y)
 
