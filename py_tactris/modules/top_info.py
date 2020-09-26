@@ -1,19 +1,20 @@
-import pygame.freetype
-from core import BACKGROUND_COLOR, BLUE, WHITE
-
-pygame.freetype.init()
+from core import BACKGROUND_COLOR, BLUE, FONT_SCORE, WHITE
 
 
 class TopInfo:
-    FONT = pygame.freetype.Font("font/HelveticaNeueCyr-Light.ttf", 14)
-
-    def __init__(self, screen, x, y):
+    def __init__(self, screen, x, y, max_score=0):
         self.screen = screen
-        self.x, self.y = x, y
+        self.score_x, self.score_y = x, y
+        self.max_score_x, self.max_score_y = x + 80, y
         self.score = 0
-        self.score_text_surface, self.rect = self.FONT.render("Счёт: ", WHITE, BACKGROUND_COLOR)
-        self.score_value_surface, self.rect = self.FONT.render("0", BLUE, BACKGROUND_COLOR)
+        self.max_score = max_score
         self.draw()
+
+    def _update(self):
+        score_value_surface, _ = FONT_SCORE.render(str(self.score), BLUE, BACKGROUND_COLOR)
+        max_score_value_surface, _ = FONT_SCORE.render(str(self.max_score), BLUE, BACKGROUND_COLOR)
+        self.screen.blit(score_value_surface, (self.score_x + 40, self.score_y))
+        self.screen.blit(max_score_value_surface, (self.max_score_x + 55, self.max_score_y))
 
     @staticmethod
     def calculate_score_incr(lines_removed: int):
@@ -22,10 +23,15 @@ class TopInfo:
         return default_incr + lines_incr
 
     def update(self, lines_removed: int):
-        self.score += self.calculate_score_incr(lines_removed)
-        self.score_value_surface, self.rect = self.FONT.render(str(self.score), BLUE, BACKGROUND_COLOR)
-        self.screen.blit(self.score_value_surface, (self.x + 40, self.y))
+        score_incr = self.calculate_score_incr(lines_removed)
+        self.score += score_incr
+        if self.score > self.max_score:
+            self.max_score += score_incr
+        self._update()
 
     def draw(self):
-        self.screen.blit(self.score_text_surface, (self.x, self.y))
-        self.screen.blit(self.score_value_surface, (self.x + 40, self.y))
+        score_text_surface, _ = FONT_SCORE.render("Счёт: ", WHITE, BACKGROUND_COLOR)
+        max_score_text_surface, _ = FONT_SCORE.render("Рекорд: ", WHITE, BACKGROUND_COLOR)
+        self.screen.blit(score_text_surface, (self.score_x, self.score_y))
+        self.screen.blit(max_score_text_surface, (self.max_score_x, self.max_score_y))
+        self._update()

@@ -1,9 +1,9 @@
 import pygame
-from core import STATES
+from core import BLOCK_STATE
 
 
 class Block:
-    def __init__(self, screen, x, y, i, j, state=STATES.UNPRESSED, width=49, height=49):
+    def __init__(self, screen, x, y, i, j, state=BLOCK_STATE.UNPRESSED, width=49, height=49):
         self.screen = screen
         self.x, self.y = x, y
         self.i, self.j = i, j
@@ -14,29 +14,29 @@ class Block:
 
     @property
     def is_pressed(self):
-        return self.state == STATES.PRESSED
+        return self.state == BLOCK_STATE.PRESSED
 
     @property
     def is_filled(self):
-        return self.state == STATES.FILLED
+        return self.state == BLOCK_STATE.FILLED
 
     def _update(self):
         pygame.draw.rect(self.screen, self.state, self.rect)
 
     def press(self):
-        self.state = STATES.PRESSED
+        self.state = BLOCK_STATE.PRESSED
         self._update()
 
     def unpress(self):
-        self.state = STATES.UNPRESSED
+        self.state = BLOCK_STATE.UNPRESSED
         self._update()
 
     def fill(self):
-        self.state = STATES.FILLED
+        self.state = BLOCK_STATE.FILLED
         self._update()
 
     def remove(self):
-        self.state = STATES.REMOVED
+        self.state = BLOCK_STATE.REMOVED
         self._update()
 
     def draw(self):
