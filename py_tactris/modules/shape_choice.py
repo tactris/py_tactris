@@ -1,4 +1,4 @@
-from core import BLOCK_STATE
+from core import BlockCore
 from modules import Block
 from shapes import Shape, get_random_shape
 
@@ -33,10 +33,11 @@ class ShapeGrid:
 
     def draw(self):
         x, y = self.x, self.y
+        default_state = BlockCore.STATE_REMOVED
         for i in range(self.n):
             line = []
             for j in range(self.n):
-                block = Block(self.screen, x, y, i, j, BLOCK_STATE.REMOVED, self.b_width, self.b_height)
+                block = Block(self.screen, x, y, i, j, default_state, self.b_width, self.b_height)
                 line.append(block)
                 x += 25
             y += 25

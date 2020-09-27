@@ -1,25 +1,34 @@
-from core import BACKGROUND_COLOR, BUTTON_STATE, FONT_BUTTON
+from core import ButtonCore
 
 
 class Button:
     def __init__(self, screen, x, y):
         self.x, self.y = x, y
         self.screen = screen
-        self.state = BUTTON_STATE.NORMAL
+        self.state = ButtonCore.STATE_NORMAL
         self.draw()
 
+    @property
+    def is_state_normal(self):
+        return self.state == ButtonCore.STATE_NORMAL
+
+    @property
+    def is_state_hover(self):
+        return self.state == ButtonCore.STATE_HOVER
+
     def _update(self):
-        text_surface, _ = FONT_BUTTON.render(self.TEXT, self.state, BACKGROUND_COLOR)  # noqa
+        color = ButtonCore.to_color(self.state)
+        text_surface, _ = ButtonCore.FONT.render(self.TEXT, color, ButtonCore.BG_COLOR)  # noqa
         self.screen.blit(text_surface, (self.x, self.y))
 
     def hover(self):
-        if self.state == BUTTON_STATE.NORMAL:
-            self.state = BUTTON_STATE.HOVER
+        if self.is_state_normal:
+            self.state = ButtonCore.STATE_HOVER
             self._update()
 
     def normal(self):
-        if self.state == BUTTON_STATE.HOVER:
-            self.state = BUTTON_STATE.NORMAL
+        if self.is_state_hover:
+            self.state = ButtonCore.STATE_NORMAL
             self._update()
 
     def draw(self):

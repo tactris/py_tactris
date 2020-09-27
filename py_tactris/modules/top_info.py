@@ -1,4 +1,4 @@
-from core import BACKGROUND_COLOR, BLUE, FONT_SCORE, WHITE
+from core import TopInfoCore
 
 
 class TopInfo:
@@ -8,11 +8,17 @@ class TopInfo:
         self.max_score_x, self.max_score_y = self.score_x + 80, self.score_y
         self.score = 0
         self.max_score = max_score
+
+        self.bg_color = TopInfoCore.BG_COLOR
+        self.title_color = TopInfoCore.TITLE_COLOR
+        self.score_color = TopInfoCore.SCORE_COLOR
+        self.font = TopInfoCore.FONT
+
         self.draw()
 
     def _update(self):
-        score_value_surface, _ = FONT_SCORE.render(str(self.score), BLUE, BACKGROUND_COLOR)
-        max_score_value_surface, _ = FONT_SCORE.render(str(self.max_score), BLUE, BACKGROUND_COLOR)
+        score_value_surface, _ = self.font.render(str(self.score), self.score_color, self.bg_color)
+        max_score_value_surface, _ = self.font.render(str(self.max_score), self.score_color, self.bg_color)
         self.screen.blit(score_value_surface, (self.score_x + 40, self.score_y))
         self.screen.blit(max_score_value_surface, (self.max_score_x + 55, self.max_score_y))
 
@@ -30,8 +36,8 @@ class TopInfo:
         self._update()
 
     def draw(self):
-        score_text_surface, _ = FONT_SCORE.render("Счёт: ", WHITE, BACKGROUND_COLOR)
-        max_score_text_surface, _ = FONT_SCORE.render("Рекорд: ", WHITE, BACKGROUND_COLOR)
+        score_text_surface, _ = self.font.render("Счёт: ", self.title_color, self.bg_color)
+        max_score_text_surface, _ = self.font.render("Рекорд: ", self.title_color, self.bg_color)
         self.screen.blit(score_text_surface, (self.score_x, self.score_y))
         self.screen.blit(max_score_text_surface, (self.max_score_x, self.max_score_y))
         self._update()

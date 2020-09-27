@@ -2,7 +2,8 @@ from typing import Optional, Tuple
 
 import numpy as np
 from modules import Block
-from utlis import SmartStack
+from utlis import matrix
+from utlis.stack import SmartStack
 
 
 class WorkingArea:
@@ -72,7 +73,7 @@ class WorkingArea:
 class Grid:
     def __init__(self, screen, cur_shapes, n=10):
         self.n = n
-        self.grid: np.ndarray = np.array([])
+        self.grid: np.ndarray
         self.screen = screen
         self.stack = SmartStack(4)
         self.working_area = WorkingArea(cur_shapes)
@@ -85,23 +86,62 @@ class Grid:
     def is_line_filled(line):
         return all(block.is_filled for block in line)
 
-    def tactris(self, lines):
-        for line in lines:
-            for block in line:
+    @property
+    def _states(self) -> np.ndarray:
+        states = []
+        for line in self.grid:
+            states.append([block.state for block in line])
+        return np.array(states)
+
+    def roll_empty_lines(self, rows, columns):
+        states = self._states
+        for i in rows:
+            if i < 5:
+                states = matrix.move_to_start(states, i)
+            else:
+                states = matrix.move_to_end(states, i)
+
+        states_T = states.T
+        for j in columns:
+            if j < 5:
+                states_T = matrix.move_to_start(states_T, j)
+            else:
+                states_T = matrix.move_to_end(states_T, j)
+
+        return states_T.T
+
+    def unpress_lines(self, rows, columns):
+        for row_idx in rows:
+            for block in self.grid[row_idx]:
                 block.unpress()
 
-    def update(self):
-        lines = []
-        for line in self.grid:
-            if self.is_line_filled(line):
-                lines.append(line)
+        for col_idx in columns:
+            for block in self.grid.T[col_idx]:
+                block.unpress()
 
-        for line in self.grid.T:
-            if self.is_line_filled(line):
-                lines.append(line)
+    def tactris(self, rows, columns):
+        self.unpress_lines(rows, columns)
+        new_states = self.roll_empty_lines(rows, columns)
+        for i in range(self.n):
+            for j in range(self.n):
+                block = self.grid[i][j]
+                new_state = new_states[i][j]
+                block.set_state(new_state)
 
-        self.tactris(lines)
-        return len(lines)
+    def update(self) -> int:
+        rows = []
+        for i, line in enumerate(self.grid):
+            if self.is_line_filled(line):
+                rows.append(i)
+
+        columns = []
+        for j, line in enumerate(self.grid.T):
+            if self.is_line_filled(line):
+                columns.append(j)
+
+        if rows or columns:
+            self.tactris(rows, columns)
+        return len(rows) + len(columns)
 
     def mouse_down(self, x, y) -> None:
         i, j = y // 50, x // 50
@@ -130,4 +170,4 @@ class Grid:
             grid.append(line)
             x = 0
             y += 50
-        self.grid = np.array(grid)
+        self.grid = np.array(grid)  # noqa
