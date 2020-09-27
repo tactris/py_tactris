@@ -5,9 +5,11 @@ BLUE = (170, 221, 255)
 BLACK = (0, 0, 0)
 GRAY = (51, 51, 51)
 
-BG_COLOR = (51, 51, 51)
-
 pygame.freetype.init()
+
+
+class TactrisCore:
+    BG_COLOR = GRAY
 
 
 class BlockCore:
