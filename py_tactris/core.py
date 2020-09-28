@@ -1,47 +1,51 @@
-import pygame.freetype
+from enum import Enum
+from typing import Tuple
 
-WHITE = (229, 229, 229)
-BLUE = (170, 221, 255)
-BLACK = (0, 0, 0)
-GRAY = (51, 51, 51)
+import pygame.freetype
 
 pygame.freetype.init()
 
 
-class TactrisCore:
-    BG_COLOR = GRAY
+class Color(Tuple, Enum):
+    WHITE = (229, 229, 229)
+    BLUE = (170, 221, 255)
+    BLACK = (0, 0, 0)
+    GRAY = (51, 51, 51)
 
 
-class BlockCore:
-    STATE_PRESSED = "pressed"
-    STATE_UNPRESSED = "unpressed"
-    STATE_FILLED = "filled"
-    STATE_REMOVED = "removed"
+class State(str, Enum):
+    PRESSED = "pressed"
+    UNPRESSED = "unpressed"
+    FILLED = "filled"
+    REMOVED = "removed"
 
-    STATE_TO_COLOR = {STATE_PRESSED: BLUE, STATE_UNPRESSED: BLACK, STATE_FILLED: WHITE, STATE_REMOVED: GRAY}
-
-    @classmethod
-    def to_color(cls, state):
-        return cls.STATE_TO_COLOR[state]
-
-
-class ButtonCore:
-    BG_COLOR = GRAY
-    FONT = pygame.freetype.Font("font/HelveticaNeueCyr-Light.ttf", 17)
-
-    STATE_NORMAL = "normal"
-    STATE_HOVER = "hover"
-
-    SATE_TO_COLOR = {STATE_NORMAL: BLUE, STATE_HOVER: WHITE}
+    __STATE_TO_COLOR__ = {
+        PRESSED: Color.BLUE,
+        UNPRESSED: Color.BLACK,
+        FILLED: Color.WHITE,
+        REMOVED: Color.GRAY,
+    }
 
     @classmethod
     def to_color(cls, state):
-        return cls.SATE_TO_COLOR[state]
+        return cls.__STATE_TO_COLOR__[state]
+
+    def __str__(self):
+        return self.value
 
 
-class TopInfoCore:
-    BG_COLOR = GRAY
-    TITLE_COLOR = WHITE
-    SCORE_COLOR = BLUE
+class ButtonState(str, Enum):
 
-    FONT = pygame.freetype.Font("font/HelveticaNeueCyr-Light.ttf", 14)
+    NORMAL = "normal"
+    HOVER = "hover"
+
+    __STATE_TO_COLOR__ = {NORMAL: Color.BLUE, HOVER: Color.WHITE}
+
+    @classmethod
+    def to_color(cls, state):
+        return cls.__STATE_TO_COLOR__[state]
+
+
+class Font:
+    BUTTON_FONT = pygame.freetype.Font("font/HelveticaNeueCyr-Light.ttf", 17)
+    TOP_INFO_FONT = pygame.freetype.Font("font/HelveticaNeueCyr-Light.ttf", 14)

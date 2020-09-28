@@ -1,6 +1,6 @@
+import core
 import pygame
 import pygame.freetype
-from core import TactrisCore
 from modules import Actions, Grid, ShapeChoice, TopInfo
 
 
@@ -49,7 +49,7 @@ class Tactris:
         self.grid.mouse_down(x, y)
 
     def draw(self, max_score=0):
-        self.screen.fill(TactrisCore.BG_COLOR)
+        self.screen.fill(core.Color.GRAY)
         self.top_info = TopInfo(self.screen, max_score=max_score)  # noqa
         self.actions = Actions(self.screen)  # noqa
         self.shape_choice = ShapeChoice(self.screen)  # noqa

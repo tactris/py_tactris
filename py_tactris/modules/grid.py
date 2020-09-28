@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
 import numpy as np
-from core import BlockCore
+from core import State
 from modules import Block
 from shapes import Shape
 from utils.stack import SmartStack
@@ -109,9 +109,9 @@ class Grid:
         closest_lines, farthest_lines = [], []
         for i in lines:
             if i < 5:
-                closest_lines.append([BlockCore.STATE_UNPRESSED] * self.n)
+                closest_lines.append([State.UNPRESSED] * self.n)
             else:
-                farthest_lines.append([BlockCore.STATE_UNPRESSED] * self.n)
+                farthest_lines.append([State.UNPRESSED] * self.n)
         return closest_lines, farthest_lines
 
     def roll_empty_lines(self, states, lines: List[int]) -> np.ndarray:

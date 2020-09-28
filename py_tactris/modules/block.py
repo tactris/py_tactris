@@ -1,9 +1,9 @@
+import core
 import pygame
-from core import BlockCore
 
 
 class Block:
-    def __init__(self, screen, x, y, i, j, state=BlockCore.STATE_UNPRESSED, width=49, height=49):
+    def __init__(self, screen, x, y, i, j, state=core.State.UNPRESSED, width=49, height=49):
         self.screen = screen
         self.x, self.y = x, y
         self.i, self.j = i, j
@@ -14,30 +14,30 @@ class Block:
 
     @property
     def is_pressed(self):
-        return self.state == BlockCore.STATE_PRESSED
+        return self.state == core.State.PRESSED
 
     @property
     def is_filled(self):
-        return self.state == BlockCore.STATE_FILLED
+        return self.state == core.State.FILLED
 
     def _update(self):
-        color = BlockCore.to_color(self.state)
+        color = core.State.to_color(self.state)
         pygame.draw.rect(self.screen, color, self.rect)
 
     def press(self):
-        self.state = BlockCore.STATE_PRESSED
+        self.state = core.State.PRESSED
         self._update()
 
     def unpress(self):
-        self.state = BlockCore.STATE_UNPRESSED
+        self.state = core.State.UNPRESSED
         self._update()
 
     def fill(self):
-        self.state = BlockCore.STATE_FILLED
+        self.state = core.State.FILLED
         self._update()
 
     def remove(self):
-        self.state = BlockCore.STATE_REMOVED
+        self.state = core.State.REMOVED
         self._update()
 
     def set_state(self, state):

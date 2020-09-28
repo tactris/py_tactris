@@ -1,4 +1,4 @@
-from core import TopInfoCore
+import core
 
 
 class TopInfo:
@@ -9,10 +9,10 @@ class TopInfo:
         self.score = 0
         self.max_score = max_score
 
-        self.bg_color = TopInfoCore.BG_COLOR
-        self.title_color = TopInfoCore.TITLE_COLOR
-        self.score_color = TopInfoCore.SCORE_COLOR
-        self.font = TopInfoCore.FONT
+        self.bg_color = core.Color.GRAY
+        self.title_color = core.Color.WHITE
+        self.score_color = core.Color.BLUE
+        self.font = core.Font.TOP_INFO_FONT
 
         self.draw()
 

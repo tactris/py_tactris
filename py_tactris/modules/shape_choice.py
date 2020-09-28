@@ -1,4 +1,4 @@
-from core import BlockCore
+from core import State
 from modules import Block
 from shapes import Shape, get_random_shape
 
@@ -31,7 +31,7 @@ class ShapeGrid:
 
     def draw(self):
         x, y = self.x, self.y
-        default_state = BlockCore.STATE_REMOVED
+        default_state = State.REMOVED
         for i in range(self.n):
             line = []
             for j in range(self.n):
