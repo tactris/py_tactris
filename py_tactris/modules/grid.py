@@ -4,7 +4,7 @@ import numpy as np
 from core import BlockCore
 from modules import Block
 from shapes import Shape
-from utlis.stack import SmartStack
+from utils.stack import SmartStack
 
 
 class WorkingArea:
