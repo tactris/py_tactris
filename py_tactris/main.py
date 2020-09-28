@@ -30,9 +30,9 @@ class Tactris:
         """
         Handler for mouse UP events
         """
-        shape_hash, lines_removed = self.grid.mouse_up()
-        if shape_hash:
-            self.shape_choice.update(shape_hash)
+        shape, lines_removed = self.grid.mouse_up()
+        if shape:
+            self.shape_choice.update(shape)
             self.top_info.update(lines_removed)
             self.grid.set_shapes(self.shape_choice.shapes)
 

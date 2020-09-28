@@ -3,16 +3,17 @@ from typing import List, Optional, Tuple
 import numpy as np
 from core import BlockCore
 from modules import Block
+from shapes import Shape
 from utlis.stack import SmartStack
 
 
 class WorkingArea:
-    def __init__(self, shapes):
+    def __init__(self, shapes: Tuple[Shape, Shape]):
         self.shape1, self.shape2 = shapes
-        self.area = []
+        self.area: List  # noqa
         self.stack = SmartStack(4)
 
-    def set_shapes(self, shapes):
+    def set_shapes(self, shapes: Tuple[Shape, Shape]):
         self.shape1, self.shape2 = shapes
 
     def press_block(self, block) -> None:
@@ -30,33 +31,39 @@ class WorkingArea:
         """
         lowest = max(self.stack, key=lambda x: x.i)
         rightest = max(self.stack, key=lambda x: x.j)
-        lowest_i = lowest.i if lowest.i > 2 else 2
-        rightest_j = rightest.j if rightest.j > 2 else 2
-        return lowest_i, rightest_j
+        return lowest.i, rightest.j
 
-    def shape_match(self) -> Optional[str]:
-        all_cur_shapes = self.shape1.SHAPES | self.shape2.SHAPES
-        if self.hash in all_cur_shapes:
-            return self.hash
+    def get_top_coord(self):
+        lowest = min(self.stack, key=lambda x: x.i)
+        rightest = min(self.stack, key=lambda x: x.j)
+        return lowest.i, rightest.j
+
+    def shape_match(self) -> Optional[Shape]:
+        _hash = self.hash
+        if self.shape1.is_match(_hash):
+            return self.shape1
+        elif self.shape2.is_match(_hash):
+            return self.shape2
         return None
 
     def update(self, grid) -> None:
         if not self.stack:
             return
         root_i, root_j = self.get_root_coord()
+        top_i, top_j = self.get_top_coord()
         self.area = []
-        for i in range(root_i - 2, root_i + 1):
+        for i in range(top_i, root_i + 1):
             line = []
-            for j in range(root_j - 2, root_j + 1):
+            for j in range(top_j, root_j + 1):
                 line.append(grid[i][j])
             self.area.append(line)
 
-    def get_shape_hash(self) -> Optional[str]:
-        shape_hash = self.shape_match()
-        if shape_hash:
+    def get_matched_shape(self) -> Optional[Shape]:
+        shape = self.shape_match()
+        if shape:
             self.fill_shape()
             self.stack.clear()
-            return shape_hash
+            return shape
         return None
 
     def fill_shape(self) -> None:
@@ -67,7 +74,7 @@ class WorkingArea:
 
     @property
     def hash(self):
-        return "".join("1" if b.is_pressed else "0" for line in self.area for b in line)
+        return tuple(tuple(int(b.is_pressed) for b in line) for line in self.area)
 
 
 class Grid:
@@ -150,11 +157,11 @@ class Grid:
         self.working_area.press_block(block)
         self.working_area.update(self.grid)
 
-    def mouse_up(self) -> Tuple[Optional[str], Optional[int]]:
-        shape_hash = self.working_area.get_shape_hash()
-        if shape_hash:
+    def mouse_up(self) -> Tuple[Optional[Shape], Optional[int]]:
+        shape = self.working_area.get_matched_shape()
+        if shape:
             lines_removed = self.update()
-            return shape_hash, lines_removed
+            return shape, lines_removed
         return None, None
 
     def draw(self):

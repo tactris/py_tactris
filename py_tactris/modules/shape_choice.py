@@ -4,7 +4,7 @@ from shapes import Shape, get_random_shape
 
 
 class ShapeGrid:
-    def __init__(self, screen, x, y, n=3):
+    def __init__(self, screen, x, y, n=4):
         self.n = n
         self.screen = screen
         self.x, self.y = x, y
@@ -18,11 +18,9 @@ class ShapeGrid:
 
     def update(self, shape: Shape):
         self.shape = shape
-        hash_iter = iter(self.shape.hash)
-        for i in range(self.n):
-            for j in range(self.n):
-                ch = next(hash_iter)
-                if ch == "1":
+        for i, line in enumerate(shape.hash):
+            for j, is_pressed in enumerate(line):
+                if is_pressed:
                     block = self.blocks[i][j]
                     block.press()
 
@@ -53,16 +51,16 @@ class ShapeChoice:
         self.screen = screen
         self.current_shapes = {}
         self.shape_grid1 = ShapeGrid(self.screen, 520, 65)
-        self.shape_grid2 = ShapeGrid(self.screen, 600, 65)
+        self.shape_grid2 = ShapeGrid(self.screen, 620, 65)
         self.draw()
 
     @property
     def shapes(self):
         return [self.shape_grid1.shape, self.shape_grid2.shape]
 
-    def update(self, _hash):
-        assert _hash in {*self.shape_grid1.shape.SHAPES, *self.shape_grid2.shape.SHAPES}
-        if self.shape_grid1.is_matched(_hash):
+    def update(self, shape):
+        assert shape in (self.shape_grid1.shape, self.shape_grid2.shape)
+        if self.shape_grid1.shape == shape:
             matched_grid, another_grid = self.shape_grid1, self.shape_grid2
         else:
             matched_grid, another_grid = self.shape_grid2, self.shape_grid1
