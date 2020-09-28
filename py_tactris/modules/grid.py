@@ -10,7 +10,7 @@ from utils.stack import SmartStack
 class WorkingArea:
     def __init__(self, shapes: Tuple[Shape, Shape]):
         self.shape1, self.shape2 = shapes
-        self.area: List  # noqa
+        self.area: List = []  # noqa
         self.stack = SmartStack(4)
 
     def set_shapes(self, shapes: Tuple[Shape, Shape]):

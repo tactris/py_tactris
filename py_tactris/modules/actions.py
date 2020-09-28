@@ -56,20 +56,20 @@ class Actions:
         self.draw()
 
     def update(self, x, y):
-        if 605 > x > 515 and 200 > y > 165:
+        if 515 < x < 605 and 165 < y < 200:
             self.button_revert.hover()
         else:
             self.button_revert.normal()
 
-        if 605 > x > 515 and 235 > y > 200:
+        if 515 < x < 605 and 200 < y < 235:
             self.button_restart.hover()
         else:
             self.button_restart.normal()
 
     def click(self, x, y):
-        if 605 > x > 515 and 200 > y > 165:
+        if 515 < x < 605 and 165 < y < 200:
             return self.ACTION_REVERT
-        elif 605 > x > 515 and 235 > y > 200:
+        elif 515 < x < 605 and 200 < y < 235:
             return self.ACTION_RESTART
 
     def draw(self):
