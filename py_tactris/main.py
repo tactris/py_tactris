@@ -37,11 +37,10 @@ class Tactris:
             self.grid.set_shapes(self.shape_choice.shapes)
 
         action = self.actions.click(x, y)
-        if action:
-            if action == Actions.ACTION_RESTART:
-                self.restart()
-            elif action == Actions.ACTION_REVERT:
-                self.revert()
+        if action == Actions.ACTION_RESTART:
+            self.restart()
+        elif action == Actions.ACTION_REVERT:
+            self.revert()
 
     def mouse_down(self, x, y):
         """
