@@ -51,7 +51,7 @@ class ShapeChoice:
         self.screen = screen
         self.current_shapes = {}
         self.shape_grid1 = ShapeGrid(self.screen, 520, 65)
-        self.shape_grid2 = ShapeGrid(self.screen, 620, 65)
+        self.shape_grid2 = ShapeGrid(self.screen, 630, 65)
         self.draw()
 
     @property

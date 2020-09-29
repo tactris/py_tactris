@@ -3,124 +3,106 @@ from typing import Tuple
 
 
 class Shape:
-    def __init__(self):
-        self.hash = random.choice(list(self.SHAPES)) # noqa
+    def __init__(self, _hash):
+        self.hash = _hash
 
     def is_match(self, _hash: Tuple) -> bool:
         return self.hash == _hash
 
-
-class LShape(Shape):
     SHAPES = {
-        (
-            (1, 0),
-            (1, 0),
-            (1, 1)
-        ), (
-            (0, 0, 1),
-            (1, 1, 1)
-        ), (
-            (1, 1),
-            (0, 1),
-            (0, 1)
-        ), (
-            (1, 1, 1),
-            (1, 0, 0)
-        )
+        "L": {
+            (
+                (1, 0),
+                (1, 0),
+                (1, 1)
+            ), (
+                (0, 0, 1),
+                (1, 1, 1)
+            ), (
+                (1, 1),
+                (0, 1),
+                (0, 1)
+            ), (
+                (1, 1, 1),
+                (1, 0, 0)
+            )
+        },
+        "J": {
+            (
+                (1, 0, 0),
+                (1, 1, 1)
+            ), (
+                (0, 1),
+                (0, 1),
+                (1, 1)
+            ), (
+                (1, 1, 1),
+                (0, 0, 1)
+            ), (
+                (1, 1),
+                (1, 0),
+                (1, 0)
+            )
+        },
+        "Z": {
+            (
+                (0, 1),
+                (1, 1),
+                (1, 0)
+            ), (
+                (1, 1, 0),
+                (0, 1, 1)
+            )
+        },
+        "S": {
+            (
+                (1, 0),
+                (1, 1),
+                (0, 1)
+            ), (
+                (0, 1, 1),
+                (1, 1, 0)
+            )
+        },
+        "T": {
+            (
+                (0, 1, 0),
+                (1, 1, 1)
+            ), (
+                (1, 0),
+                (1, 1),
+                (1, 0)
+            ), (
+                (1, 1, 1),
+                (0, 1, 0)
+            ), (
+                (0, 1),
+                (1, 1),
+                (0, 1)
+            )
+        },
+        "O": {
+            (
+                (1, 1),
+                (1, 1)
+            )
+        },
+        "I": {
+            (
+                (1,),
+                (1,),
+                (1,),
+                (1,)
+            ), (
+                (1, 1, 1, 1),
+            )
+        }
     }
 
-
-class JShape(Shape):
-    SHAPES = {
-        (
-            (1, 0, 0),
-            (1, 1, 1)
-        ), (
-            (0, 1),
-            (0, 1),
-            (1, 1)
-        ), (
-            (1, 1, 1),
-            (0, 0, 1)
-        ), (
-            (1, 1),
-            (1, 0),
-            (1, 0)
-        )
-    }
+    ALL_SHAPES: set = set().union(*SHAPES.values())  # type: ignore
 
 
-class ZShape(Shape):
-    SHAPES = {
-        (
-            (0, 1),
-            (1, 1),
-            (1, 0)
-        ), (
-            (1, 1, 0),
-            (0, 1, 1)
-        )
-    }
-
-
-class SShape(Shape):
-    SHAPES = {
-        (
-            (1, 0),
-            (1, 1),
-            (0, 1)
-        ), (
-            (0, 1, 1),
-            (1, 1, 0)
-        )
-    }
-
-
-class TShape(Shape):
-    SHAPES = {
-        (
-            (0, 1, 0),
-            (1, 1, 1)
-        ), (
-            (1, 0),
-            (1, 1),
-            (1, 0)
-        ), (
-            (1, 1, 1),
-            (0, 1, 0)
-        ), (
-            (0, 1),
-            (1, 1),
-            (0, 1)
-        )
-    }
-
-
-class OShape(Shape):
-    SHAPES = {
-        (
-            (1, 1),
-            (1, 1)
-        )
-    }
-
-
-class IShape(Shape):
-    SHAPES = {
-        (
-            (1,),
-            (1,),
-            (1,),
-            (1,)
-        ), (
-            (1, 1, 1, 1),
-        )
-    }
-
-
-def get_random_shape(*shapes) -> Shape:
-    classes = [LShape, JShape, ZShape, SShape, TShape, OShape, IShape]
-    for shape in shapes:
-        classes.remove(shape.__class__)
-    cls = random.choice(classes)
-    return cls()
+def get_random_shape(*shapes: Shape) -> Shape:
+    all_shapes = Shape.ALL_SHAPES - set(shape.hash for shape in shapes)
+    _hash = random.choice(list(all_shapes))
+    return Shape(_hash)

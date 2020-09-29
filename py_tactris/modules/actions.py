@@ -48,28 +48,28 @@ class Actions:
     ACTION_RESTART = "restart"
 
     def __init__(self, screen):
-        self.rev_x, self.rev_y = 515, 165
-        self.res_x, self.res_y = 515, 200
+        self.rev_x, self.rev_y = 515, 200
+        self.res_x, self.res_y = 515, 235
         self.screen = screen
         self.button_revert: ButtonRevert
         self.button_restart: ButtonRestart
         self.draw()
 
     def update(self, x, y):
-        if 515 < x < 605 and 165 < y < 200:
+        if 515 < x < 605 and 200 < y < 235:
             self.button_revert.hover()
         else:
             self.button_revert.normal()
 
-        if 515 < x < 605 and 200 < y < 235:
+        if 515 < x < 605 and 235 < y < 270:
             self.button_restart.hover()
         else:
             self.button_restart.normal()
 
     def click(self, x, y):
-        if 515 < x < 605 and 165 < y < 200:
+        if 515 < x < 605 and 200 < y < 235:
             return self.ACTION_REVERT
-        elif 515 < x < 605 and 200 < y < 235:
+        elif 515 < x < 605 and 235 < y < 270:
             return self.ACTION_RESTART
 
     def draw(self):
