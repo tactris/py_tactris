@@ -1,3 +1,4 @@
+import pickle
 from typing import Tuple
 
 import core
@@ -13,6 +14,17 @@ class GameState:
         self.blocks_states = blocks_states
         self.shapes = shapes
         self.score = score
+        self.dump()
+
+    def dump(self):
+        with open(".t_session.pickle", "wb") as f:
+            pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+    @classmethod
+    def load(cls):
+        with open(".t_session.pickle", "rb") as f:
+            data = pickle.load(f)
+        return data
 
 
 class Tactris:
@@ -76,7 +88,7 @@ class Tactris:
 
     def draw(self, max_score=0):
         self.screen.fill(core.Color.GRAY)
-        self.game_state = None  # noqa
+        self.game_state = GameState.load()  # noqa
         self.top_info = TopInfo(self.screen, max_score=max_score)  # noqa
         self.actions = Actions(self.screen)  # noqa
         self.shape_choice = ShapeChoice(self.screen)  # noqa
