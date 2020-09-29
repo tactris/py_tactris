@@ -6,7 +6,7 @@ class TopInfo:
         self.screen = screen
         self.score_x, self.score_y = 515, 20
         self.max_score_x, self.max_score_y = self.score_x + 80, self.score_y
-        self.score = 0
+        self.score: int = 0
         self.max_score = max_score
 
         self.bg_color = core.Color.GRAY
@@ -27,6 +27,10 @@ class TopInfo:
         default_incr = 4
         lines_incr = lines_removed * 10 * lines_removed
         return default_incr + lines_incr
+
+    def set_score(self, score: int):
+        self.score = score
+        self._update()
 
     def update(self, lines_removed: int):
         score_incr = self.calculate_score_incr(lines_removed)

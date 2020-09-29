@@ -13,9 +13,6 @@ class ShapeGrid:
         self.shape = None
         self.draw()
 
-    def is_matched(self, _hash):
-        return _hash in self.shape.SHAPES
-
     def update(self, shape: Shape):
         self.shape = shape
         for i, line in enumerate(shape.hash):
@@ -49,7 +46,6 @@ class ShapeGrid:
 class ShapeChoice:
     def __init__(self, screen):
         self.screen = screen
-        self.current_shapes = {}
         self.shape_grid1 = ShapeGrid(self.screen, 520, 65)
         self.shape_grid2 = ShapeGrid(self.screen, 630, 65)
         self.draw()
@@ -57,6 +53,12 @@ class ShapeChoice:
     @property
     def shapes(self):
         return [self.shape_grid1.shape, self.shape_grid2.shape]
+
+    def set_shapes(self, shape1: Shape, shape2: Shape):
+        self.shape_grid1.clear()
+        self.shape_grid1.update(shape1)
+        self.shape_grid2.clear()
+        self.shape_grid2.update(shape2)
 
     def update(self, shape):
         assert shape in (self.shape_grid1.shape, self.shape_grid2.shape)
@@ -70,7 +72,6 @@ class ShapeChoice:
         matched_grid.update(shape)
 
     def draw(self):
-        shape_cls1 = get_random_shape()
-        shape_cls2 = get_random_shape(shape_cls1)
-        self.shape_grid1.update(shape_cls1)
-        self.shape_grid2.update(shape_cls2)
+        shape1 = get_random_shape()
+        shape2 = get_random_shape(shape1)
+        self.set_shapes(shape1, shape2)

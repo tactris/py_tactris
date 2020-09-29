@@ -20,6 +20,12 @@ class Block:
     def is_filled(self):
         return self.state == core.State.FILLED
 
+    @property
+    def filled_or_unpressed(self):
+        if self.is_filled:
+            return self.state
+        return core.State.UNPRESSED
+
     def _update(self):
         color = core.State.to_color(self.state)
         pygame.draw.rect(self.screen, color, self.rect)

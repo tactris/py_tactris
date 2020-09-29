@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
+import core
 import numpy as np
-from core import State
 from modules import Block
 from shapes import Shape
 from utils.stack import SmartStack
@@ -13,8 +13,8 @@ class WorkingArea:
         self.area: List = []  # noqa
         self.stack = SmartStack(4)
 
-    def set_shapes(self, shapes: Tuple[Shape, Shape]):
-        self.shape1, self.shape2 = shapes
+    def set_shapes(self, shape1: Shape, shape2: Shape):
+        self.shape1, self.shape2 = shape1, shape2
 
     def press_block(self, block) -> None:
         if block.is_filled or block.is_pressed:
@@ -59,18 +59,14 @@ class WorkingArea:
             self.area.append(line)
 
     def get_matched_shape(self) -> Optional[Shape]:
-        shape = self.shape_match()
-        if shape:
-            self.fill_shape()
-            self.stack.clear()
-            return shape
-        return None
+        return self.shape_match()
 
     def fill_shape(self) -> None:
         for line in self.area:
             for block in line:
                 if block.is_pressed:
                     block.fill()
+        self.stack.clear()
 
     @property
     def hash(self):
@@ -86,15 +82,20 @@ class Grid:
         self.working_area = WorkingArea(cur_shapes)
         self.draw()
 
-    def set_shapes(self, shapes):
-        self.working_area.set_shapes(shapes)
+    def set_shapes(self, *shapes):
+        self.working_area.set_shapes(*shapes)
 
-    @property
-    def _states(self) -> np.ndarray:
-        states = []
+    def get_blocks_states(self) -> np.ndarray:
+        blocks_states = []
         for line in self.grid:
-            states.append([block.state for block in line])
-        return np.array(states)
+            blocks_states.append([block.is_filled for block in line])
+        return np.array(blocks_states)
+
+    def set_blocks_states(self, blocks_states: np.ndarray):
+        for i, line in enumerate(blocks_states):
+            for j, is_filled in enumerate(line):
+                block = self.grid[i][j]
+                block.set_state(core.State.FILLED if is_filled else core.State.UNPRESSED)
 
     @staticmethod
     def is_line_filled(line):
@@ -109,9 +110,9 @@ class Grid:
         closest_lines, farthest_lines = [], []
         for i in lines:
             if i < 5:
-                closest_lines.append([State.UNPRESSED] * self.n)
+                closest_lines.append([False] * self.n)
             else:
-                farthest_lines.append([State.UNPRESSED] * self.n)
+                farthest_lines.append([False] * self.n)
         return closest_lines, farthest_lines
 
     def roll_empty_lines(self, states, lines: List[int]) -> np.ndarray:
@@ -124,16 +125,13 @@ class Grid:
         return np.array(new_states)
 
     def transform_grid(self, rows, cols):
-        _new_states = self.roll_empty_lines(self._states, rows)
+        blocks_states = self.get_blocks_states()
+        _new_states = self.roll_empty_lines(blocks_states, rows)
         _new_states = self.roll_empty_lines(_new_states.T, cols)  # TODO: this doesn't work :|
-        new_states = _new_states.T
-        for i in range(self.n):
-            for j in range(self.n):
-                block = self.grid[i][j]
-                new_state = new_states[i][j]
-                block.set_state(new_state)
+        self.set_blocks_states(_new_states.T)
 
     def update(self) -> int:
+        self.working_area.fill_shape()
         rows, cols = [], []
         for i, row in enumerate(self.grid):
             if self.is_line_filled(row):
@@ -157,12 +155,8 @@ class Grid:
         self.working_area.press_block(block)
         self.working_area.update(self.grid)
 
-    def mouse_up(self) -> Tuple[Optional[Shape], Optional[int]]:
-        shape = self.working_area.get_matched_shape()
-        if shape:
-            lines_removed = self.update()
-            return shape, lines_removed
-        return None, None
+    def mouse_up(self) -> Optional[Shape]:
+        return self.working_area.get_matched_shape()
 
     def draw(self):
         grid = []
