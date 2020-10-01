@@ -125,9 +125,13 @@ class Grid:
         return np.array(new_states)
 
     def transform_grid(self, rows, cols):
+        for i in rows:
+            self.unpress_line(self.grid[i])
+        for j in cols:
+            self.unpress_line(self.grid.T[j])
         blocks_states = self.get_blocks_states()
         _new_states = self.roll_empty_lines(blocks_states, rows)
-        _new_states = self.roll_empty_lines(_new_states.T, cols)  # TODO: this doesn't work :|
+        _new_states = self.roll_empty_lines(_new_states.T, cols)
         self.set_blocks_states(_new_states.T)
 
     def update(self) -> int:
@@ -135,12 +139,10 @@ class Grid:
         rows, cols = [], []
         for i, row in enumerate(self.grid):
             if self.is_line_filled(row):
-                self.unpress_line(row)
                 rows.append(i)
 
         for j, col in enumerate(self.grid.T):
             if self.is_line_filled(col):
-                self.unpress_line(col)
                 cols.append(j)
 
         if rows or cols:
