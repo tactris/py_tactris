@@ -2,3 +2,5 @@
 .idea/
 .t_session.pickle
 __pycache__/
+.venv
+.fleet

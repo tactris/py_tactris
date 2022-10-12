@@ -6,7 +6,7 @@ import numpy as np
 import pygame
 import pygame.freetype
 from modules import Actions, Grid, ShapeChoice, TopInfo
-from shapes import Shape
+from shapes import Shape, get_random_shape
 
 
 class GameState:
@@ -22,8 +22,13 @@ class GameState:
 
     @classmethod
     def load(cls):
-        with open(".t_session.pickle", "rb") as f:
-            data = pickle.load(f)
+        try:
+            with open(".t_session.pickle", "rb") as f:
+                data = pickle.load(f)
+        except FileNotFoundError:
+            shape1 = get_random_shape()
+            shape2 = get_random_shape(shape1)
+            data = GameState(blocks_states=np.full((10, 10), False), shapes=(shape1, shape2), score=0)
         return data
 
 
